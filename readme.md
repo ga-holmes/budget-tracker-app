@@ -10,7 +10,12 @@ This app is built on React Native & Expo, which run on NodeJS. You also need and
 Follow some guides if you need to get react-native running: https://reactnative.dev/docs/environment-setup.
 Once you've installed NodeJS you can use the node package manager (npm) to install the required packages.
 I'll add to this list as packages are added.
-- none so far
+- formik
+- yup
+- react-native-modal
+- react-native-date-picker
+- react-native-element-dropdown
+- npx expo install @react-native-community/datetimepicker
 
 ## Running
 - To run a dev build, use `npm start`
