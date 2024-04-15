@@ -5,7 +5,7 @@ export const globalStyles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        marginVertical: 10,
+        marginVertical: 20,
         marginHorizontal: 10
     },
     borderStyle: {
@@ -21,6 +21,11 @@ export const globalStyles = StyleSheet.create({
         borderRadius: 6,
         padding: 10,
         margin: 10
+    },
+    errorText: {
+        fontStyle: 'italic',
+        textAlign: 'center',
+        color: "#df6666"
     }
 
 })

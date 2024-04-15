@@ -16,21 +16,21 @@ export default function Home() {
         {
             name: "quiznos",
             amount: 15.58,
-            date: "Sept 26, 2023",
+            date: new Date(),
             category: "Eating Out",
             key: 1
         },
         {
             name: "bike lock",
             amount: 30.12,
-            date: "Sept 28, 2023",
+            date: new Date(),
             category: "Utility",
             key: 2
         },
         {
             name: "presto",
             amount: 50,
-            date: "Jan 12, 2024",
+            date: new Date(),
             category: "Utility",
             key: 3
         },
@@ -41,7 +41,7 @@ export default function Home() {
         purchase.key = Math.random().toString();
 
         setPurchases((currentPurchases) => {
-            return [...currentReviews, purchase]
+            return [...currentPurchases, purchase]
         });
 
         setModalOpen(false);
@@ -62,7 +62,7 @@ export default function Home() {
                     style={{ ...styles.addButton, ...globalStyles.borderStyle }}
                     onPress={() => setModalOpen(false)}
                 />
-                <PurchaseForm/>
+                <PurchaseForm addPurchase={addPurchase}/>
             </View>
         </Modal>
 
