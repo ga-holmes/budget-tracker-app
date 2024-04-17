@@ -59,7 +59,7 @@ export default function Home() {
                     name='close'
                     size={36}
                     // ... 'destructures' the object
-                    style={{ ...styles.addButton, ...globalStyles.borderStyle }}
+                    style={styles.addButton}
                     onPress={() => setModalOpen(false)}
                 />
                 <PurchaseForm addPurchase={addPurchase}/>
@@ -89,6 +89,7 @@ export default function Home() {
 
 const styles = StyleSheet.create({
     addButton: {
+        ...globalStyles.borderStyle,
         padding: 3,
         borderRadius: 100,
         alignSelf: 'center',

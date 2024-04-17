@@ -15,7 +15,7 @@ export const globalStyles = StyleSheet.create({
     modalContainer: {
         padding: 20,
         backgroundColor: '#fff',
-        borderRadius: 20
+        borderRadius: 20,
     },
     input: {
         borderRadius: 6,

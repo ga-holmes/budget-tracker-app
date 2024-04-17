@@ -11,17 +11,14 @@ import FlatButton from './FlatButton'
 
 import * as yup from 'yup';
 
-// data for dropdown (change later)
-const data = [
-    { label: 'Item 1', value: '1' },
-    { label: 'Item 2', value: '2' },
-    { label: 'Item 3', value: '3' },
-    { label: 'Item 4', value: '4' },
-    { label: 'Item 5', value: '5' },
-    { label: 'Item 6', value: '6' },
-    { label: 'Item 7', value: '7' },
-    { label: 'Item 8', value: '8' },
-    { label: 'Item 9', value: '9' },
+// data for dropdown (change later) (useState doesnt work)
+const categories = [
+    { label: 'Eating Out', value: 1 },
+    { label: 'Entertainment', value: 2 },
+    { label: 'Groceries', value: 3 },
+    { label: 'Trinkits', value: 4 },
+    { label: 'Utility', value: 5 },
+
 ];
 
 const purchaseSchema = yup.object({
@@ -41,11 +38,11 @@ const purchaseSchema = yup.object({
         .required()
         .test('is-real-category', 'Must be an existing category', (val) => {
             
-            const isReal = false;
+            let isReal = false;
 
-            data.forEach(element => {
+            categories.forEach(element => {
                 if (val == element.label){
-                    isReal = True;
+                    isReal = true;
                 }
             });
             return isReal;
@@ -64,13 +61,10 @@ export default function PurchaseForm({ addPurchase }) {
 
     // NOTE: This date picker only works on android, look into https://github.com/react-native-datetimepicker/datetimepicker for ios code when possible
     const [date, setDate] = useState(new Date());
-
-    const onChange = (event, selectedDate) => {
-        setDate(selectedDate);
-    };
+    const [selectedCategory, setSelectedCategory] = useState('')
 
     return (
-        <View>
+        <View style={styles.formContainer}>
             
             <Formik
                 initialValues={{ name: '', date: new Date(), amount: '', category: '' }}
@@ -84,7 +78,7 @@ export default function PurchaseForm({ addPurchase }) {
                 {({handleSubmit, values, setFieldValue, handleChange, handleBlur, touched, errors}) => (
                     <View>
                         <TextInput
-                            style={{...globalStyles.input, ...globalStyles.borderStyle}}
+                            style={styles.nameInput}
                             placeholder='Purchase Name'
                             onChangeText={handleChange('name')}
                             value={values.name}
@@ -93,49 +87,57 @@ export default function PurchaseForm({ addPurchase }) {
 
                         <Text style={globalStyles.errorText}>{touched.name && errors.name}</Text>
 
-                        <View style={{ ...globalStyles.input, ...globalStyles.borderStyle }}>
-                            <TouchableOpacity onPress={() => {
-                                DateTimePickerAndroid.open({
-                                    value: date,
-                                    onChange: (event, selectedDate) => {
-                                        setDate(selectedDate);
-                                        setFieldValue('date', selectedDate);
-                                    },
-                                    mode: 'date',
-                                    display: 'spinner',
-                                });
-                            }}>
-                                <Text>{date.toLocaleDateString("en-US", dateOptions)}</Text>
-                            </TouchableOpacity>
+                        <View style={styles.dateAmtBox}>
+
+                            <View style={styles.dateInput}>
+                                <TouchableOpacity onPress={() => {
+                                    DateTimePickerAndroid.open({
+                                        value: date,
+                                        onChange: (event, selectedDate) => {
+                                            setDate(selectedDate);
+                                            setFieldValue('date', selectedDate);
+                                        },
+                                        mode: 'date',
+                                        display: 'spinner',
+                                    });
+                                }}>
+                                    <Text>{date.toLocaleDateString("en-US", dateOptions)}</Text>
+                                </TouchableOpacity>
+                                
+                                <Text style={globalStyles.errorText}>{touched.date && errors.date}</Text>
+                            
+                            </View>
+                            
+                            <View>
+                                <TextInput
+                                    style={styles.amtInput}
+                                    placeholder='Amount'
+                                    onChangeText={handleChange('amount')}
+                                    value={values.amount}
+                                    keyboardType='numeric'
+                                    onBlur={handleBlur('amount')}
+                                />
+
+                                <Text style={globalStyles.errorText}>{touched.amount && errors.amount}</Text>
+                            </View>
+
                         </View>
                         
-                        <Text style={globalStyles.errorText}>{touched.date && errors.date}</Text>
-
-                        <TextInput
-                            style={{ ...globalStyles.input, ...globalStyles.borderStyle }}
-                            placeholder='Amount'
-                            onChangeText={handleChange('amount')}
-                            value={values.amount}
-                            keyboardType='numeric'
-                            onBlur={handleBlur('amount')}
-                        />
-
-                        <Text style={globalStyles.errorText}>{touched.amount && errors.amount}</Text>
-                        
-                        <View style={{ ...globalStyles.input, ...globalStyles.borderStyle }}>
+                        <View style={styles.catInput}>
                             <Dropdown
-                                data={data}
+                                data={categories}
                                 search
                                 maxHeight={200}
                                 labelField="label"
                                 valueField="value"
                                 placeholder="Select Category"
                                 searchPlaceholder="Search..."
-                                value={values.category}
+                                value={selectedCategory}
                                 onChange={item => {
-                                    handleChange('category');
+                                    setSelectedCategory(item.value);
+                                    setFieldValue('category', item.label);
                                 }}
-                                // onBlur={handleBlur('category')}
+                                // onBlur={handleBlur('category')} 'cannot read property persist of undefined'
                             />
                         </View>
 
@@ -156,4 +158,34 @@ export default function PurchaseForm({ addPurchase }) {
     )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    formContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        padding: 10,
+    },
+    dateInput: {
+        ...globalStyles.input,
+        ...globalStyles.borderStyle,
+    },
+    amtInput: {
+        ...globalStyles.input,
+        ...globalStyles.borderStyle,
+
+    },
+    nameInput: {
+        ...globalStyles.input,
+        ...globalStyles.borderStyle,
+
+    },
+    catInput: {
+        ...globalStyles.input, 
+        ...globalStyles.borderStyle,
+
+    },
+    dateAmtBox: {
+        flexDirection: 'row',
+    }
+
+})
