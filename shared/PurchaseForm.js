@@ -72,7 +72,7 @@ export default function PurchaseForm({ addPurchase }) {
                 onSubmit={(values, actions) => {
                     actions.resetForm();
                     addPurchase(values);
-                    console.log(values);
+                    // console.log(values);
                 }}
             >
                 {({handleSubmit, values, setFieldValue, handleChange, handleBlur, touched, errors}) => (
