@@ -89,24 +89,22 @@ export default function PurchaseForm({ addPurchase }) {
 
                         <View style={styles.dateAmtBox}>
 
-                            <View style={styles.dateInput}>
-                                <TouchableOpacity onPress={() => {
-                                    DateTimePickerAndroid.open({
-                                        value: date,
-                                        onChange: (event, selectedDate) => {
-                                            setDate(selectedDate);
-                                            setFieldValue('date', selectedDate);
-                                        },
-                                        mode: 'date',
-                                        display: 'spinner',
-                                    });
-                                }}>
-                                    <Text>{date.toLocaleDateString("en-US", dateOptions)}</Text>
-                                </TouchableOpacity>
-                                
-                                <Text style={globalStyles.errorText}>{touched.date && errors.date}</Text>
+                            <TouchableOpacity style={styles.dateInput} onPress={() => {
+                                DateTimePickerAndroid.open({
+                                    value: date,
+                                    onChange: (event, selectedDate) => {
+                                        setDate(selectedDate);
+                                        setFieldValue('date', selectedDate);
+                                    },
+                                    mode: 'date',
+                                    display: 'spinner'
+                                });
+                            }}>
+                                <Text style={styles.dateText}>{date.toLocaleDateString("en-US", dateOptions)}</Text>
+                            </TouchableOpacity>
                             
-                            </View>
+                            <Text style={globalStyles.errorText}>{touched.date && errors.date}</Text>
+                        
                             
                             <View>
                                 <TextInput
@@ -163,29 +161,39 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-        padding: 10,
+        // padding: 10,
+        width: '100%',
     },
     dateInput: {
         ...globalStyles.input,
         ...globalStyles.borderStyle,
+        // following two are sort of a hack to center-align the text in the date box
+        height: 50,
+        padding: 15
+        
     },
     amtInput: {
         ...globalStyles.input,
         ...globalStyles.borderStyle,
-
+        overflow: 'scroll',
+        width: 170,
+        maxWidth: 170,
+        height: 50
     },
     nameInput: {
         ...globalStyles.input,
         ...globalStyles.borderStyle,
-
+        maxWidth: '100%',
+        overflow: 'scroll'
     },
     catInput: {
         ...globalStyles.input, 
         ...globalStyles.borderStyle,
-
     },
     dateAmtBox: {
         flexDirection: 'row',
-    }
+        width: 300,
+        maxWidth: 300
+    },
 
 })

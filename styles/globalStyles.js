@@ -20,7 +20,7 @@ export const globalStyles = StyleSheet.create({
     input: {
         borderRadius: 6,
         padding: 10,
-        margin: 10
+        margin: 5
     },
     errorText: {
         fontStyle: 'italic',

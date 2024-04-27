@@ -57,7 +57,7 @@ export default function Home() {
             <View style={globalStyles.modalContainer}>
                 <MaterialIcons
                     name='close'
-                    size={36}
+                    size={28}
                     // ... 'destructures' the object
                     style={styles.addButton}
                     onPress={() => setModalOpen(false)}
