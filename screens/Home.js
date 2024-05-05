@@ -83,7 +83,11 @@ export default function Home() {
 
     const addPurchase = async (purchase) => {
 
-        purchase.key = Math.random().toString();
+        try {
+            purchase.key = purchases.length > 0 ? purchases[purchases.length-1].key + 1 : 1
+        } catch (e) {
+            return e;
+        }
 
         const newPurchases = [ ...purchases, purchase];
 
@@ -91,11 +95,21 @@ export default function Home() {
             return [...currentPurchases, purchase]
         });
 
-        console.log(newPurchases);
+        console.log(purchase);
 
         await storeData(newPurchases, '@purchases');
 
         setModalOpen(false);
+
+    }
+
+    const removePurchase = async (key) => {
+
+        const newPurchases = purchases.filter(purchase => purchase.key != key);
+
+        setPurchases(newPurchases);
+        // NOTE: because filter is screwy this doesnt save the state properly if storing 'purchases', so i store 'newPurchases' instead which should be identical
+        await storeData(newPurchases, '@purchases')
 
     }
 
@@ -121,7 +135,7 @@ export default function Home() {
             data={purchases}
             style={{ borderBottomColor: "#aaa", borderBottomWidth: 2 }}
             renderItem={({ item }) => (
-                <TouchableOpacity>
+                <TouchableOpacity onPress={ () => { removePurchase(item.key) }}>
                     <PurchaseCard name={item.name} amount={item.amount} date={new Date(item.date)} category={item.category} keyNum={item.key}/>
                 </TouchableOpacity>
             )}
@@ -152,6 +166,13 @@ export default function Home() {
             console.log(await getData('@purchases'));
         }}>
             <Text>Log AsyncStorage</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={{ ...globalStyles.input, ...globalStyles.borderStyle }} onPress={async () => {
+            await storeData(purchases, '@purchases');
+            console.log('saved');
+        }}>
+            <Text>Save AsyncStorage</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={{ ...globalStyles.input, ...globalStyles.borderStyle }} onPress={async () => {
