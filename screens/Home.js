@@ -21,23 +21,25 @@ const dateOptions = {
 
 export default function Home() {
 
+    const [modalOpen, setModalOpen] = useState(false);
+
     const [purchases, setPurchases] = useState([
         // {
-        //     name: "quiznos",
-        //     amount: 15.58,
-        //     date: new Date(),
-        //     category: "Eating Out",
-        //     key: 1
-        // },
-        // {
-        //     name: "bike lock",
-        //     amount: 30.12,
-        //     date: new Date(),
-        //     category: "Utility",
-        //     key: 2
-        // },
-        // {
-        //     name: "presto",
+            //     name: "quiznos",
+            //     amount: 15.58,
+            //     date: new Date(),
+            //     category: "Eating Out",
+            //     key: 1
+            // },
+            // {
+                //     name: "bike lock",
+                //     amount: 30.12,
+                //     date: new Date(),
+                //     category: "Utility",
+                //     key: 2
+                // },
+                // {
+                    //     name: "presto",
         //     amount: 50,
         //     date: new Date(),
         //     category: "Utility",
@@ -65,40 +67,52 @@ export default function Home() {
             console.log(e);
         }
     }
-
+    
     // defines what happens when the app loads
     const onLoad = async () => {
-
+        
         const toSet = await getData('@purchases')
-
+        
         setPurchases(toSet);
+
     }
 
-    // run functions
+    // run functions on load
     useEffect(() => {
         onLoad();
         console.log(purchases);
-    }, [])
+
+    }, []);
+
+    // run on state change for purchases
+    useEffect(() => {
+        setAverage(getAverage(purchases));
+        setWeeklyAvg(getWeeklyAvg(purchases));
+    }, [purchases]);
 
 
     const addPurchase = async (purchase) => {
 
         try {
+            
             purchase.key = purchases.length > 0 ? purchases[purchases.length-1].key + 1 : 1
+            
+            const newPurchases = [ ...purchases, purchase];
+    
+            setPurchases((currentPurchases) => {
+                return [...currentPurchases, purchase]
+            });
+            
+            console.log(purchase);
+            // console.log(Array.isArray(newPurchases));
+    
+            await storeData(newPurchases, '@purchases');
+
+            
         } catch (e) {
-            return e;
+            console.log(e);
         }
-
-        const newPurchases = [ ...purchases, purchase];
-
-        setPurchases((currentPurchases) => {
-            return [...currentPurchases, purchase]
-        });
-
-        console.log(purchase);
-
-        await storeData(newPurchases, '@purchases');
-
+        
         setModalOpen(false);
 
     }
@@ -113,7 +127,30 @@ export default function Home() {
 
     }
 
-    const [modalOpen, setModalOpen] = useState(false);
+    const [average, setAverage] = useState(0);
+    const [weeklyAvg, setWeeklyAvg] = useState(0);
+
+    const getAverage = (purchaseList) => {
+        let total = purchaseList.reduce((total, next) => total + parseFloat(next.amount), 0)
+        let avg = purchaseList.length > 0 ? (total / purchaseList.length).toFixed(2) : 0
+
+        return avg;
+    }
+
+    const getWeeklyAvg = (purchasesList) => {
+
+        let prevMonday = (new Date());
+        // find the most recent monday: https://stackoverflow.com/questions/35088088/javascript-for-getting-the-previous-monday & https://stackoverflow.com/questions/4156434/javascript-get-the-first-day-of-the-week-from-current-date
+        prevMonday.setDate(prevMonday.getDate() - (prevMonday.getDay() + 6) % 7);
+
+        const compDate = toComp => (purchase) => {
+            return purchase.date >= toComp;
+        }
+        
+        const lastWeek = purchasesList.filter(compDate(prevMonday));
+
+        return getAverage(lastWeek);
+    }
 
   return (
     <View style={globalStyles.container}>
@@ -149,6 +186,13 @@ export default function Home() {
             />
         </TouchableOpacity>
 
+        <View style={{ ...styles.statsContainer, ...globalStyles.borderStyle }}>
+
+            <Text style={styles.statsText}>Overall Avg: ${average}</Text>
+            <Text style={styles.statsText}>Weekly Avg: ${weeklyAvg}</Text>    
+            
+        </View>
+
         <TouchableOpacity style={{ ...globalStyles.input, ...globalStyles.borderStyle }} onPress={async () => {
             try {
                 await AsyncStorage.clear();
@@ -178,7 +222,7 @@ export default function Home() {
         <TouchableOpacity style={{ ...globalStyles.input, ...globalStyles.borderStyle }} onPress={async () => {
               addPurchase({
                 name: "test",
-                amount: 1,
+                amount: (Math.random()*10).toFixed(2),
                 date: new Date(),
                 category: "Utility"
             })
@@ -198,5 +242,15 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         textAlign: 'center',
         textAlignVertical: 'center',
+    },
+    statsContainer: {
+        flexDirection: 'row',
+        padding: 5,
+        borderRadius: 5
+    },
+    statsText: {
+        flex: 1,
+        margin: 2,
+        textAlign: 'center'
     }
 })
