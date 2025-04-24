@@ -185,13 +185,15 @@ export default function Home() {
                 style={{...styles.addButton, ...globalStyles.borderStyle}}
             />
         </TouchableOpacity>
-
+        
+        {/* Display stats */}
         <View style={{ ...styles.statsContainer, ...globalStyles.borderStyle }}>
 
             <Text style={styles.statsText}>Overall Avg: ${average}</Text>
             <Text style={styles.statsText}>Weekly Avg: ${weeklyAvg}</Text>    
             
         </View>
+        
 
         <TouchableOpacity style={{ ...globalStyles.input, ...globalStyles.borderStyle }} onPress={async () => {
             try {
